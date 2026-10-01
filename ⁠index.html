@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>彰化王功蚵仔麵 - 線上點餐系統</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background-color: #f4f6f8;
+            margin: 0;
+            padding: 15px;
+            color: #333;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: #fff;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #1b4965;
+            margin-bottom: 5px;
+        }
+        .subtitle {
+            text-align: center;
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 20px;
+        }
+        .category-title {
+            background-color: #e8f1f5;
+            color: #1b4965;
+            padding: 10px 15px;
+            border-radius: 8px;
+            font-weight: bold;
+            margin-top: 20px;
+            font-size: 16px;
+        }
+        .menu-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 5px;
+            border-bottom: 1px solid #eee;
+        }
+        .item-name {
+            font-size: 15px;
+            font-weight: 500;
+        }
+        .item-price {
+            color: #e63946;
+            font-weight: bold;
+            margin-left: 8px;
+        }
+        .qty-controls {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .btn-qty {
+            width: 32px;
+            height: 32px;
+            border: none;
+            background-color: #62b6cb;
+            color: white;
+            border-radius: 50%;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .btn-qty:active {
+            background-color: #1b4965;
+        }
+        .qty-display {
+            width: 25px;
+            text-align: center;
+            font-weight: bold;
+        }
+        .summary-box {
+            margin-top: 25px;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            border: 1px solid #e9ecef;
+        }
+        .total-price {
+            font-size: 20px;
+            font-weight: bold;
+            color: #e63946;
+            text-align: right;
+            margin-top: 10px;
+        }
+        .btn-submit {
+            width: 100%;
+            background-color: #2b9348;
+            color: white;
+            padding: 14px;
+            border: none;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: bold;
+            margin-top: 15px;
+            cursor: pointer;
+        }
+        .btn-submit:active {
+            background-color: #55a630;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>🦪 彰化王功蚵仔麵</h1>
+    <div class="subtitle">線上點餐系統</div>
+
+    <div id="menu-container"></div>
+
+    <div class="summary-box">
+        <h3>🛒 訂單明細</h3>
+        <div id="order-summary">尚未選擇餐點</div>
+        <div class="total-price">合計：NT$ <span id="total-amount">0</span></div>
+    </div>
+
+    <button class="btn-submit" onclick="submitOrder()">確認送出訂單</button>
+</div>
+
+<script>
+    const menuData = [
+        {
+            category: "🦪 蚵仔系列",
+            items: [
+                { name: "鮮蚵蓋飯", price: 120 },
+                { name: "鮮蚵泡飯", price: 100 },
+                { name: "蚵仔湯麵", price: 100 },
+                { name: "蚵仔乾麵", price: 100 },
+                { name: "蚵仔湯麵線", price: 100 },
+                { name: "蚵仔乾麵線", price: 100 },
+                { name: "蚵仔湯粄條", price: 100 },
+                { name: "蚵仔乾粄條", price: 100 },
+                { name: "蚵仔仁湯", price: 90 },
+                { name: "蚵仔湯(不裹粉)", price: 120 },
+                { name: "乾蚵盤", price: 150 }
+            ]
+        },
+        {
+            category: "🍚 飯麵&湯品",
+            items: [
+                { name: "瓜仔肉便當＋小貢丸湯", price: 90 },
+                { name: "瓜仔肉飯", price: 40 },
+                { name: "清湯粄條", price: 50 },
+                { name: "清乾粄條", price: 50 },
+                { name: "清湯麵線", price: 50 },
+                { name: "清乾麵線", price: 50 },
+                { name: "清湯麵", price: 50 },
+                { name: "清乾麵", price: 50 },
+                { name: "大貢丸湯", price: 50 },
+                { name: "貢丸湯", price: 40 },
+                { name: "青菜湯", price: 40 }
+            ]
+        },
+        {
+            category: "🥬 小菜",
+            items: [
+                { name: "燙青菜", price: 40 },
+                { name: "油豆腐", price: 30 },
+                { name: "滷蛋", price: 15 }
+            ]
+        }
+    ];
+
+    const cart = {};
+
+    function renderMenu() {
+        const container = document.getElementById('menu-container');
+        let idCounter = 0;
+
+        menuData.forEach(cat => {
+            const catDiv = document.createElement('div');
+            catDiv.className = 'category-title';
+            catDiv.innerText = cat.category;
+            container.appendChild(catDiv);
+
+            cat.items.forEach(item => {
+                const itemId = 'item_' + idCounter++;
+                cart[itemId] = { name: item.name, price: item.price, qty: 0 };
+
+                const itemDiv = document.createElement('div');
+                itemDiv.className = 'menu-item';
+                itemDiv.innerHTML = `
+                    <div>
+                        <span class="item-name">${item.name}</span>
+                        <span class="item-price">$${item.price}</span>
+                    </div>
+                    <div class="qty-controls">
+                        <button class="btn-qty" onclick="changeQty('${itemId}', -1)">-</button>
+                        <span class="qty-display" id="qty-${itemId}">0</span>
+                        <button class="btn-qty" onclick="changeQty('${itemId}', 1)">+</button>
+                    </div>
+                `;
+                container.appendChild(itemDiv);
+            });
+        });
+    }
+
+    function changeQty(itemId, delta) {
+        if (cart[itemId].qty + delta >= 0) {
+            cart[itemId].qty += delta;
+            document.getElementById(`qty-${itemId}`).innerText = cart[itemId].qty;
+            updateSummary();
+        }
+    }
+
+    function updateSummary() {
+        const summaryDiv = document.getElementById('order-summary');
+        const totalSpan = document.getElementById('total-amount');
+        let total = 0;
+        let summaryHtml = '';
+
+        for (const id in cart) {
+            if (cart[id].qty > 0) {
+                const itemTotal = cart[id].price * cart[id].qty;
+                total += itemTotal;
+                summaryHtml += `<div>${cart[id].name} x ${cart[id].qty} = $${itemTotal}</div>`;
+            }
+        }
+
+        if (summaryHtml === '') {
+            summaryDiv.innerHTML = '尚未選擇餐點';
+        } else {
+            summaryDiv.innerHTML = summaryHtml;
+        }
+
+        totalSpan.innerText = total;
+    }
+
+    function submitOrder() {
+        let total = 0;
+        let orderDetails = [];
+
+        for (const id in cart) {
+            if (cart[id].qty > 0) {
+                orderDetails.push(`${cart[id].name} x ${cart[id].qty}`);
+                total += cart[id].price * cart[id].qty;
+            }
+        }
+
+        if (orderDetails.length === 0) {
+            alert('請先選擇餐點！');
+            return;
+        }
+
+        alert(`點餐成功！\n\n餐點明細：\n${orderDetails.join('\n')}\n\n總計金額：$${total} 元`);
+    }
+
+    renderMenu();
+</script>
+
+</body>
+</html>
