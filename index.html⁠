@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>彰化王功蚵仔麵 - 線上點餐系統</title>
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; padding: 20px; background-color: #f8f9fa; color: #333; }
+        h1 { text-align: center; color: #1a252f; margin-bottom: 20px; }
+        .category { background: white; border-radius: 10px; padding: 15px; margin-bottom: 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        .category-title { font-size: 1.2rem; font-weight: bold; border-bottom: 2px solid #007bff; padding-bottom: 5px; margin-bottom: 10px; color: #007bff; }
+        .menu-item { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+        .item-info { flex-grow: 1; }
+        .item-name { font-size: 1rem; font-weight: 500; }
+        .item-price { color: #e63946; font-weight: bold; margin-top: 2px; }
+        .quantity-control { display: flex; align-items: center; gap: 8px; }
+        .btn-qty { width: 30px; height: 30px; border: none; background-color: #e9ecef; border-radius: 5px; font-size: 1.1rem; font-weight: bold; cursor: pointer; }
+        .qty-num { width: 25px; text-align: center; font-weight: bold; }
+        .total-section { position: sticky; bottom: 0; background: #fff; padding: 15px; border-top: 1px solid #ddd; border-radius: 10px 10px 0 0; box-shadow: 0 -2px 10px rgba(0,0,0,0.1); display: flex; justify-content: space-between; align-items: center; }
+        .total-price { font-size: 1.2rem; font-weight: bold; color: #e63946; }
+        .submit-btn { background-color: #28a745; color: white; border: none; padding: 10px 20px; border-radius: 5px; font-size: 1rem; font-weight: bold; cursor: pointer; }
+    </style>
+</head>
+<body>
+
+    <h1>彰化王功蚵仔麵</h1>
+
+    <div class="category">
+        <div class="category-title">🦪 蚵仔系列</div>
+        <div class="menu-item">
+            <div class="item-info"><div class="item-name">鮮蚵蓋飯</div><div class="item-price">$120</div></div>
+            <div class="quantity-control"><button class="btn-qty" onclick="changeQty('item1', -1)">-</button><span id="item1" class="qty-num" data-price="120">0</span><button class="btn-qty" onclick="changeQty('item1', 1)">+</button></div>
+        </div>
+        <div class="menu-item">
+            <div class="item-info"><div class="item-name">蚵仔湯麵</div><div class="item-price">$100</div></div>
+            <div class="quantity-control"><button class="btn-qty" onclick="changeQty('item2', -1)">-</button><span id="item2" class="qty-num" data-price="100">0</span><button class="btn-qty" onclick="changeQty('item2', 1)">+</button></div>
+        </div>
+        <div class="menu-item">
+            <div class="item-info"><div class="item-name">蚵仔湯</div><div class="item-price">$90</div></div>
+            <div class="quantity-control"><button class="btn-qty" onclick="changeQty('item3', -1)">-</button><span id="item3" class="qty-num" data-price="90">0</span><button class="btn-qty" onclick="changeQty('item3', 1)">+</button></div>
+        </div>
+    </div>
+
+    <div class="category">
+        <div class="category-title">🍚 飯麵 & 湯品</div>
+        <div class="menu-item">
+            <div class="item-info"><div class="item-name">瓜仔肉飯</div><div class="item-price">$40</div></div>
+            <div class="quantity-control"><button class="btn-qty" onclick="changeQty('item4', -1)">-</button><span id="item4" class="qty-num" data-price="40">0</span><button class="btn-qty" onclick="changeQty('item4', 1)">+</button></div>
+        </div>
+        <div class="menu-item">
+            <div class="item-info"><div class="item-name">清湯麵線</div><div class="item-price">$50</div></div>
+            <div class="quantity-control"><button class="btn-qty" onclick="changeQty('item5', -1)">-</button><span id="item5" class="qty-num" data-price="50">0</span><button class="btn-qty" onclick="changeQty('item5', 1)">+</button></div>
+        </div>
+        <div class="menu-item">
+            <div class="item-info"><div class="item-name">貢丸湯</div><div class="item-price">$40</div></div>
+            <div class="quantity-control"><button class="btn-qty" onclick="changeQty('item6', -1)">-</button><span id="item6" class="qty-num" data-price="40">0</span><button class="btn-qty" onclick="changeQty('item6', 1)">+</button></div>
+        </div>
+    </div>
+
+    <div class="category">
+        <div class="category-title">🥬 小菜</div>
+        <div class="menu-item">
+            <div class="item-info"><div class="item-name">燙青菜</div><div class="item-price">$40</div></div>
+            <div class="quantity-control"><button class="btn-qty" onclick="changeQty('item7', -1)">-</button><span id="item7" class="qty-num" data-price="40">0</span><button class="btn-qty" onclick="changeQty('item7', 1)">+</button></div>
+        </div>
+        <div class="menu-item">
+            <div class="item-info"><div class="item-name">油豆腐</div><div class="item-price">$30</div></div>
+            <div class="quantity-control"><button class="btn-qty" onclick="changeQty('item8', -1)">-</button><span id="item8" class="qty-num" data-price="30">0</span><button class="btn-qty" onclick="changeQty('item8', 1)">+</button></div>
+        </div>
+        <div class="menu-item">
+            <div class="item-info"><div class="item-name">滷蛋</div><div class="item-price">$15</div></div>
+            <div class="quantity-control"><button class="btn-qty" onclick="changeQty('item9', -1)">-</button><span id="item9" class="qty-num" data-price="15">0</span><button class="btn-qty" onclick="changeQty('item9', 1)">+</button></div>
+        </div>
+    </div>
+
+    <div class="total-section">
+        <div>總金額：<span id="total" class="total-price">$0</span></div>
+        <button class="submit-btn" onclick="submitOrder()">送出點餐</button>
+    </div>
+
+    <script>
+        function changeQty(id, delta) {
+            let element = document.getElementById(id);
+            let current = parseInt(element.innerText);
+            let next = Math.max(0, current + delta);
+            element.innerText = next;
+            calculateTotal();
+        }
+
+        function calculateTotal() {
+            let total = 0;
+            let items = document.querySelectorAll('.qty-num');
+            items.forEach(item => {
+                let qty = parseInt(item.innerText);
+                let price = parseInt(item.getAttribute('data-price'));
+                total += qty * price;
+            });
+            document.getElementById('total').innerText = '$' + total;
+        }
+
+        function submitOrder() {
+            let total = document.getElementById('total').innerText;
+            if (total === '$0') {
+                alert('請先選擇餐點！');
+            } else {
+                alert('點餐成功！總金額為：' + total);
+            }
+        }
+    </script>
+</body>
+</html>
